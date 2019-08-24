@@ -50,3 +50,16 @@ start_date : YYYY-MM-DD
 end_date : YYYY-MM-DD
 caregivers: {caregiver_name_1},{caregiver_name_2},..
 
+
+Things left out
+-----------------------------
+
+1. Authentication
+2. TimeZone handling
+3. Validation of the filtering parameters
+4. database views for each caregiver and month
+5. Database indexes from improving performance
+6. Language settings and config
+
+
+
