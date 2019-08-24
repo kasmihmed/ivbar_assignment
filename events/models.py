@@ -10,7 +10,7 @@ class EventType(models.Model):
 
 
 class Event(models.Model):
-    care_giver = models.ForeignKey(CareGiver) # TODO: check delete strategy
-    event_type = models.ForeignKey(EventType) # TODO: check delete strategy
+    care_giver = models.ForeignKey(CareGiver, on_delete=models.PROTECT) # TODO: check delete strategy
+    event_type = models.ForeignKey(EventType, on_delete=models.PROTECT) # TODO: check delete strategy
     time_stamp = models.DateTimeField(auto_now_add=True)
 
