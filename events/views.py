@@ -1,5 +1,7 @@
 from collections import defaultdict
 from itertools import groupby
+
+from django.db.models import Q
 from rest_framework import viewsets
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
@@ -12,11 +14,25 @@ from django.shortcuts import get_object_or_404
 class EventView(viewsets.ViewSet):
 
     def list(self, request):
-        events = Event.objects.all().select_related('event_type')
+        events = Event.objects.filter(self._filter_q(request)).select_related('event_type')
         sums_by_month_caregiver = defaultdict(lambda: defaultdict(int))
         for event in events:
             sums_by_month_caregiver[event.time_stamp.month][event.care_giver.name] += event.event_type.reimbursement_amount
         return Response(sums_by_month_caregiver)
+
+    def _filter_q(self, request):
+        caregiver_names = request.query_params.get('caregivers', None)
+        start_date = request.query_params.get('start_date', None)
+        end_date = request.query_params.get('end_date', None)
+        filter_q = Q()
+        if caregiver_names is not None:
+            caregiver_names = caregiver_names.split(',')
+            filter_q &= Q(care_giver__name__in=caregiver_names)
+        if start_date is not None:
+            filter_q &= Q(time_stamp__gte=start_date)
+        if end_date is not None:
+            filter_q &= Q(time_stamp__lte=end_date)
+        return filter_q
 
     def create(self, request, caregiver_id):
         data = JSONParser().parse(request)
