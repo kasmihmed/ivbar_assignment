@@ -1,0 +1,84 @@
+swagger: "2.0"
+info:
+  description: ""
+  version: "1.0.0"
+  title: "Health care events API "
+host: "localhost:8000"
+basePath: "/"
+tags:
+- name: "events"
+  description: "Creating events and generating reports"
+
+schemes:
+- "http"
+paths:
+  /caregivers/{caregiverId}/events/:
+    post:
+      tags:
+      - "events"
+      summary: "Add a new event"
+      description: "Create a new event for a caregiver"
+      operationId: "addEvent"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        name: "caregiverId"
+        description: "ID of caregiver to add the event to"
+        required: true
+        type: "integer"
+        format: "int64"
+      - in: "body"
+        name: "event_type"
+        description: "event type of the event to be added"
+        required: true
+        schema:
+          type: object
+          properties:
+            event_type:
+              type: "string"
+              example: "event type 1"
+
+      responses:
+        201:
+          description: "The event has been created successfully"
+
+  /events/:
+     get:
+      tags:
+      - "events"
+      consumes:
+      - "application/json"
+      description: "Get events report by month number and caregiver"
+      parameters:
+      - in: "query"
+        name: "start_date"
+        type: "string"
+        required: false
+        format: "date-time"
+      - in: "query"
+        name: "end_date"
+        type: "string"
+        required: false
+        format: "date-time"
+      - in: "query"
+        name: "caregivers"
+        description: "comma separated caregivers names"
+        type: "string"
+      responses:
+        200:
+          description: "grouped events by month number and caregiver"
+          schema:
+            type: object
+            additionalProperties:
+              type: object
+              additionalProperties:
+                type: integer
+            example:
+              8:
+                caregiver_1: 5000
+                caregiver_2: 800
+
+
