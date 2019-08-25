@@ -17,6 +17,6 @@ class EventSerializer(serializers.Serializer):
         """
         Create and return a new `Event` instance, given the validated data.
         """
-        care_giver = get_object_or_404(CareGiver, name=validated_data['care_giver_name'])
-        event_type = get_object_or_404(EventType, name=validated_data['event_type_name'])
-        return Event.objects.create(care_giver=care_giver, event_type=event_type)
+        event_type = get_object_or_404(EventType, name=validated_data['event_type'])
+        return Event.objects.create(care_giver=validated_data['care_giver'],
+                                    event_type=event_type)

@@ -14,7 +14,7 @@ from django.shortcuts import get_object_or_404
 class EventView(viewsets.ViewSet):
 
     def list(self, request):
-        events = Event.objects.filter(self._filter_q(request)).select_related('event_type')
+        events = Event.objects.filter(self._filter_q(request)).select_related('event_type', 'care_giver')
         sums_by_month_caregiver = defaultdict(lambda: defaultdict(int))
         for event in events:
             sums_by_month_caregiver[event.time_stamp.month][event.care_giver.name] += event.event_type.reimbursement_amount
@@ -38,8 +38,7 @@ class EventView(viewsets.ViewSet):
         data = JSONParser().parse(request)
         serializer = EventSerializer(data=data)
         if serializer.is_valid():
-            data['care_giver_name'] = get_object_or_404(CareGiver, pk=caregiver_id).name
-            data['event_type_name'] = data.pop('event_type')
+            data['care_giver'] = get_object_or_404(CareGiver, pk=caregiver_id)
             serializer.save(**data)
             return Response(status=201)
         return Response(serializer.errors, status=400)

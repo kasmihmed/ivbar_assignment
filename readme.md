@@ -41,6 +41,7 @@ Things left out
 4. database views on event per  caregiver and  month
 5. Database indexes for  performance improvement
 6. Language settings and config
+7. patch the date handling in the tests
 
 
 
