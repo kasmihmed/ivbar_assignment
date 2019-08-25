@@ -1,6 +1,4 @@
 from collections import defaultdict
-from itertools import groupby
-
 from django.db.models import Q
 from rest_framework import viewsets
 from rest_framework.parsers import JSONParser
@@ -14,10 +12,14 @@ from django.shortcuts import get_object_or_404
 class EventView(viewsets.ViewSet):
 
     def list(self, request):
-        events = Event.objects.filter(self._filter_q(request)).select_related('event_type', 'care_giver')
+        events = Event.objects.filter(self._filter_q(request))\
+            .select_related('event_type', 'care_giver')
         sums_by_month_caregiver = defaultdict(lambda: defaultdict(int))
         for event in events:
-            sums_by_month_caregiver[event.time_stamp.month][event.care_giver.name] += event.event_type.reimbursement_amount
+            month = event.time_stamp.month
+            caregiver_name = event.care_giver.name
+            sums_by_month_caregiver[month][caregiver_name] += \
+                event.event_type.reimbursement_amount
         return Response(sums_by_month_caregiver)
 
     def _filter_q(self, request):

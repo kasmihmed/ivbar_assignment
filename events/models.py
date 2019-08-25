@@ -6,7 +6,8 @@ from caregivers.models import CareGiver
 class EventType(models.Model):
     # currency is assumed to be fixed to SEK for now
     name = models.CharField(max_length=100)
-    reimbursement_amount = models.FloatField(blank=False, null=False, validators=[MinValueValidator(0)])
+    reimbursement_amount = models.FloatField(blank=False, null=False,
+                                             validators=[MinValueValidator(0)])
 
     class Meta:
         unique_together = ('name',)
@@ -22,4 +23,3 @@ class Event(models.Model):
 
     def __str__(self):
         return f"{self.event_type} from {self.care_giver} ({self.time_stamp})"
-
